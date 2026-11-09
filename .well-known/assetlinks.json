@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.zloma.swapp",
+      "sha256_cert_fingerprints": [
+        "EA:D2:28:F5:FF:F2:EB:D7:08:38:64:31:12:5E:73:28:DA:BC:43:6F:9E:72:4B:A5:E2:58:93:07:75:C0:C3:B6",
+        "53:02:C5:4A:23:8F:7A:17:30:D6:84:33:6B:35:01:06:29:BF:DC:25:FA:85:C8:DD:40:F3:F4:74:23:17:FF:D7"
+      ]
+    }
+  }
+]
