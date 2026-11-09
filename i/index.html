@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-SVIbHGcc3smgk40amM3PDiNxrJ53pJYNNXl1E1kIPdQ='; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light">
+<title>Poziv u aplikaciju Loopa</title>
+<style>
+  :root { --fg:#1a1a1a; --muted:#4a4a4a; --bg:#ffffff; --card:#f3f5f8; --accent:#0b57d0; --accent-fg:#ffffff; --line:#5f6368; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); line-height:1.5; font-size:1.0625rem;
+         font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  main { max-width: 32rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+  h1 { font-size: 1.5rem; line-height: 1.25; margin: 0 0 .5rem; }
+  h2 { font-size: 1.125rem; margin: 1.75rem 0 .5rem; }
+  p { margin: .5rem 0; }
+  .muted { color: var(--muted); }
+  .code-card { background: var(--card); border-radius: 12px; padding: 1.25rem 1rem; margin: 1.25rem 0; text-align: center; }
+  .code-label { margin: 0 0 .5rem; color: var(--muted); }
+  .code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 2.5rem; font-weight: 700;
+          letter-spacing: .12em; margin: 0 0 1rem; overflow-wrap: anywhere; }
+  .btn { display: flex; align-items: center; justify-content: center; min-height: 48px; min-width: 48px; width: 100%;
+         padding: .75rem 1rem; margin: .75rem 0; border-radius: 8px; border: 2px solid var(--accent);
+         font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; text-align: center; }
+  .btn-primary { background: var(--accent); color: var(--accent-fg); }
+  .btn-secondary { background: var(--bg); color: var(--accent); }
+  .btn:focus-visible, a:focus-visible { outline: 3px solid #000; outline-offset: 3px; box-shadow: 0 0 0 6px #fff; }
+  a { color: var(--accent); }
+  ol { padding-left: 1.5rem; } li { margin: .5rem 0; }
+  .note { background: var(--card); border-left: 4px solid var(--line); padding: .75rem 1rem; border-radius: 4px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Poziv u aplikaciju Loopa</h1>
+  <p class="muted">Loopa je zatvorena zajednica. Za ulazak trebaš pozivni kod od nekoga tko je već član.</p>
+
+  <noscript><p class="note">Za prikaz koda potreban je JavaScript. Kod možeš upisati i ručno u aplikaciji.</p></noscript>
+
+  <section id="valid" hidden>
+    <div class="code-card">
+      <p class="code-label" id="code-label">Tvoj pozivni kod</p>
+      <p class="code" id="code" aria-labelledby="code-label"></p>
+      <button type="button" class="btn btn-secondary" id="copy">Kopiraj kod</button>
+      <p id="copy-status" role="status" aria-live="polite" class="muted"></p>
+    </div>
+
+    <a class="btn btn-primary" id="open" href="#">Otvori u aplikaciji</a>
+    <a class="btn btn-secondary" id="download" href="/">Preuzmi aplikaciju</a>
+    <p id="download-note" class="muted" hidden>Aplikacija još nije dostupna za preuzimanje.</p>
+
+    <h2>Kako do ulaska</h2>
+    <ol>
+      <li>Preuzmi i instaliraj aplikaciju. Ako Android pita, dopusti instalaciju iz nepoznatih izvora.</li>
+      <li>Prijavi se Google računom.</li>
+      <li>Upiši pozivni kod. Ako aplikaciju otvoriš gumbom „Otvori u aplikaciji”, kod je već upisan.</li>
+    </ol>
+    <p class="note">Nakon instalacije ponovno dodirni poveznicu poziva ili upiši kod ručno.</p>
+  </section>
+
+  <section id="invalid" hidden aria-labelledby="invalid-title">
+    <h2 id="invalid-title">Ovaj kod ne radi</h2>
+    <p id="invalid-msg"></p>
+    <a class="btn btn-secondary" href="/">Idi na stranicu za preuzimanje</a>
+  </section>
+
+  <p class="muted">Treba ti pomoć? Piši na <a href="mailto:tzlomislic@gmail.com">tzlomislic@gmail.com</a>.</p>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var ALPHABET = /^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{8}$/;
+  var SCHEME = "io.github.zloma.swapp://invite?c=";
+
+  function normalize(raw) {
+    if (typeof raw !== "string") return "";
+    return raw.slice(0, 64).toUpperCase().replace(/[\s-]+/g, "");
+  }
+  function $(id) { return document.getElementById(id); }
+
+  var raw = new URLSearchParams(window.location.search).get("c");
+  var code = normalize(raw);
+
+  if (code === "") {
+    $("invalid-msg").textContent = "U poveznici nema pozivnog koda. Otvori cijelu poveznicu iz poruke ili zatraži novi kod od osobe koja te poziva.";
+    $("invalid").hidden = false;
+    return;
+  }
+  if (!ALPHABET.test(code)) {
+    $("invalid-msg").textContent = "Ovaj kod ne vrijedi. Provjeri ga ili zatraži novi od osobe koja te poziva.";
+    $("invalid").hidden = false;
+    return;
+  }
+
+  $("code").textContent = code.slice(0, 4) + " " + code.slice(4);
+  $("open").setAttribute("href", SCHEME + code);
+  $("valid").hidden = false;
+
+  var status = $("copy-status");
+  $("copy").addEventListener("click", function () {
+    function ok() { status.textContent = "Kod je kopiran."; }
+    function fail() { status.textContent = "Kopiranje nije uspjelo. Označi kod i kopiraj ga ručno."; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code).then(ok, fail);
+      return;
+    }
+    var ta = document.createElement("textarea");
+    ta.value = code; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { if (document.execCommand("copy")) { ok(); } else { fail(); } } catch (e) { fail(); }
+    document.body.removeChild(ta);
+  });
+
+  // Download button: APK URL from version.json; only https accepted.
+  var dl = $("download");
+  fetch("/version.json", { cache: "no-cache", credentials: "omit" })
+    .then(function (r) { if (!r.ok) throw new Error("http"); return r.json(); })
+    .then(function (v) {
+      var url = v && typeof v.apkUrl === "string" ? v.apkUrl : "";
+      if (!/^https:\/\//.test(url)) throw new Error("no apk");
+      dl.setAttribute("href", url);
+    })
+    .catch(function () {
+      dl.setAttribute("href", "/");
+      $("download-note").hidden = false;
+    });
+})();
+</script>
+</body>
+</html>
