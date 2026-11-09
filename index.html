@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Tca6t7cLUAQFVLfvvk4z+w2lYryojc3o1dx+DESH/qY='; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light">
+<title>Preuzmi Loopa</title>
+<style>
+  :root { --fg:#1a1a1a; --muted:#4a4a4a; --bg:#ffffff; --card:#f3f5f8; --accent:#0b57d0; --accent-fg:#ffffff; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); line-height:1.5; font-size:1.0625rem;
+         font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  main { max-width: 32rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; }
+  h2 { font-size: 1.125rem; margin: 1.75rem 0 .5rem; }
+  .muted { color: var(--muted); }
+  .btn { display: flex; align-items: center; justify-content: center; min-height: 48px; min-width: 48px; width: 100%;
+         padding: .75rem 1rem; margin: 1rem 0 .5rem; border-radius: 8px; border: 2px solid var(--accent);
+         background: var(--accent); color: var(--accent-fg); font: inherit; font-weight: 600; text-decoration: none; text-align: center; }
+  .btn[aria-disabled="true"] { background: var(--card); color: var(--muted); border-color: var(--muted); }
+  .btn:focus-visible, a:focus-visible { outline: 3px solid #000; outline-offset: 3px; box-shadow: 0 0 0 6px #fff; }
+  a { color: var(--accent); }
+  ol { padding-left: 1.5rem; } li { margin: .5rem 0; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Preuzmi Loopa</h1>
+  <p>Loopa je zatvorena zajednica za posuđivanje stvari među prijateljima u Mostaru.</p>
+
+  <a class="btn" id="download" href="/" aria-disabled="true">Prva verzija uskoro</a>
+  <p class="muted" id="version" hidden></p>
+
+  <h2>Instalacija</h2>
+  <ol>
+    <li>Preuzmi APK datoteku.</li>
+    <li>Otvori je. Ako Android pita, dopusti instalaciju iz nepoznatih izvora za preglednik ili aplikaciju Datoteke.</li>
+    <li>Dovrši instalaciju i otvori aplikaciju.</li>
+    <li>Prijavi se Google računom i upiši pozivni kod.</li>
+  </ol>
+
+  <p class="muted">Treba ti pomoć? Piši na <a href="mailto:tzlomislic@gmail.com">tzlomislic@gmail.com</a>.</p>
+</main>
+<script>
+(function () {
+  "use strict";
+  var dl = document.getElementById("download");
+  dl.addEventListener("click", function (e) {
+    if (dl.getAttribute("aria-disabled") === "true") e.preventDefault();
+  });
+  fetch("/version.json", { cache: "no-cache", credentials: "omit" })
+    .then(function (r) { if (!r.ok) throw new Error("http"); return r.json(); })
+    .then(function (v) {
+      var url = v && typeof v.apkUrl === "string" ? v.apkUrl : "";
+      if (!/^https:\/\//.test(url)) return;
+      dl.setAttribute("href", url);
+      dl.removeAttribute("aria-disabled");
+      dl.textContent = "Preuzmi aplikaciju";
+      if (typeof v.versionName === "string" && v.versionName) {
+        var el = document.getElementById("version");
+        el.textContent = "Verzija " + v.versionName;
+        el.hidden = false;
+      }
+    })
+    .catch(function () {});
+})();
+</script>
+</body>
+</html>
