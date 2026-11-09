@@ -2,7 +2,7 @@
 <html lang="hr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Tca6t7cLUAQFVLfvvk4z+w2lYryojc3o1dx+DESH/qY='; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-DNFOL/TXuDwyU7mFyBT+QYJuvMFB6qSLBWg8AvCa91Q='; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light">
@@ -54,14 +54,14 @@
   fetch("/version.json", { cache: "no-cache", credentials: "omit" })
     .then(function (r) { if (!r.ok) throw new Error("http"); return r.json(); })
     .then(function (v) {
-      var url = v && typeof v.apkUrl === "string" ? v.apkUrl : "";
+      var url = v && typeof v.url === "string" ? v.url : "";
       if (!/^https:\/\//.test(url)) return;
       dl.setAttribute("href", url);
       dl.removeAttribute("aria-disabled");
       dl.textContent = "Preuzmi aplikaciju";
-      if (typeof v.versionName === "string" && v.versionName) {
+      if (typeof v.latest === "string" && v.latest && v.latest !== "0.0.0") {
         var el = document.getElementById("version");
-        el.textContent = "Verzija " + v.versionName;
+        el.textContent = "Verzija " + v.latest;
         el.hidden = false;
       }
     })

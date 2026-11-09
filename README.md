@@ -4,7 +4,7 @@ Static site for the Loopa app (code name `swapp`, Android package `io.github.zlo
 
 | Path | What |
 |------|------|
-| `/` (`index.html`) | Download page. The button points to `apkUrl` from `version.json`. |
+| `/` (`index.html`) | Download page. The button points to `url` from `version.json`. |
 | `/i/?c=CODE` (`i/index.html`) | Invite landing page. Shows the code, "Otvori u aplikaciji" (custom scheme `io.github.zloma.swapp://invite?c=CODE`) and the download button. `noindex`. |
 | `/version.json` | Latest release info, read by the site and by the app (task 4.8). |
 | `/.well-known/assetlinks.json` | Android App Links verification (release + debug SHA-256). |
@@ -12,18 +12,17 @@ Static site for the Loopa app (code name `swapp`, Android package `io.github.zlo
 
 ## `version.json` fields
 
+Schema from ADR 006 (plan rows 4.7 and 4.8):
+
 ```json
-{ "versionName": "0.0.0", "versionCode": 0, "apkUrl": "", "minSupported": 0 }
+{ "latest": "0.0.0", "min": "0.0.0", "url": "" }
 ```
 
 | Field | Type | Meaning |
 |-------|------|---------|
-| `versionName` | string | Latest released version, e.g. `1.0.0`. Shown on the download page. |
-| `versionCode` | integer | Android `versionCode` of the latest release. |
-| `apkUrl` | string | Stable `https://` URL of the APK (planned: `https://github.com/zloma/swapp-download/releases/latest/download/<fixed-name>.apk`). Empty string = no release yet; the pages then show a placeholder. Only `https://` values are used. |
-| `minSupported` | integer | Lowest `versionCode` still allowed to run. Builds below it get the blocking update screen. `0` = no block. |
-
-Note for task 4.8: ADR 006 and plan row 4.8 describe the older shape `{latest, min, url}`. The shape above is what this site uses; align the app's version check (4.8) and `tool/release.ps1` (4.7) with it, or the ADR.
+| `latest` | string (`x.y.z`) | Latest released version. Shown on the download page and used by the app for the dismissible "new version" prompt. |
+| `min` | string (`x.y.z`) | Lowest version still allowed to run. Older builds get the blocking update screen. `0.0.0` = no block. |
+| `url` | string | Stable `https://` URL of the APK (planned: `https://github.com/zloma/swapp-download/releases/latest/download/<fixed-name>.apk`). Empty string = no release yet; the pages then show a placeholder. Only `https://` values are used. |
 
 ## Local preview
 

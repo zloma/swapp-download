@@ -2,7 +2,7 @@
 <html lang="hr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-SVIbHGcc3smgk40amM3PDiNxrJ53pJYNNXl1E1kIPdQ='; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-hyiTFf+VcuiQ+pS+a0vGiKSAq+FQM8dYSLUDPkg4S1c='; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <meta name="referrer" content="no-referrer">
@@ -121,7 +121,7 @@
   fetch("/version.json", { cache: "no-cache", credentials: "omit" })
     .then(function (r) { if (!r.ok) throw new Error("http"); return r.json(); })
     .then(function (v) {
-      var url = v && typeof v.apkUrl === "string" ? v.apkUrl : "";
+      var url = v && typeof v.url === "string" ? v.url : "";
       if (!/^https:\/\//.test(url)) throw new Error("no apk");
       dl.setAttribute("href", url);
     })
