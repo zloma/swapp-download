@@ -41,25 +41,25 @@ A wrong hash makes the browser block the script, so the invite page would show n
 
 ## GitHub Pages setup (owner steps, once)
 
-1. On GitHub create the **public** repo `zloma/swapp-download` (empty, no README).
-2. In this folder: `git remote add origin https://github.com/zloma/swapp-download.git` then `git push -u origin main`.
-3. Repo Settings → Pages → Build and deployment: Source "Deploy from a branch", Branch `main`, folder `/ (root)`.
-4. Add the DNS record (below), then in Settings → Pages → Custom domain enter `loopa.zloma.org` and Save. (The `CNAME` file already contains it.)
-5. Wait for the DNS check and certificate, then tick **Enforce HTTPS**.
+Order matters: verify the domain **first**, so nobody else can claim `zloma.org` subdomains on GitHub Pages while the DNS record exists.
+
+1. **Verify the domain.** GitHub profile (top right) → Settings → Pages → Add a domain → `zloma.org`. GitHub shows a TXT record (`_github-pages-challenge-zloma`). Add it at the DNS provider of `zloma.org`, click Verify, and wait until it shows as **Verified**. A verified domain cannot be claimed by another GitHub account, including after a Pages site is removed.
+2. On GitHub create the **public** repo `zloma/swapp-download` (empty, no README).
+3. In this folder: `git remote add origin https://github.com/zloma/swapp-download.git` then `git push -u origin main`.
+4. Repo Settings → Pages → Build and deployment: Source "Deploy from a branch", Branch `main`, folder `/ (root)`.
+5. Add the DNS CNAME record (below).
+6. In Settings → Pages → Custom domain enter `loopa.zloma.org` and Save. (The `CNAME` file already contains it.)
+7. Wait for the DNS check and certificate, then tick **Enforce HTTPS**.
 
 ### DNS record
 
-At the DNS provider of `zloma.org`:
+At the DNS provider of `zloma.org`, only after step 1 shows Verified:
 
 | Type | Name | Value |
 |------|------|-------|
 | CNAME | `loopa` | `zloma.github.io` |
 
 Do not add an A record for it, and do not point it at anything else.
-
-### Verify the domain (prevents takeover)
-
-GitHub profile (top right) → Settings → Pages → Add a domain → `zloma.org`. GitHub shows a TXT record (`_github-pages-challenge-zloma`); add it at the DNS provider and click Verify. A verified domain cannot be claimed by another GitHub account if the Pages site is ever removed.
 
 ## Check App Links
 
