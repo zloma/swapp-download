@@ -1,6 +1,6 @@
 # swapp-download
 
-Static site for the Loopa app (code name `swapp`, Android package `io.github.zloma.swapp`), served by GitHub Pages at **https://loopa.zloma.org**. No build step, no trackers, no cookies, no third-party scripts or fonts.
+Static site for the Loopa app (code name `swapp`, Android package `io.github.zloma.swapp`), served by GitHub Pages at **https://loopa.zloma.app**. No build step, no trackers, no cookies, no third-party scripts or fonts.
 
 | Path | What |
 |------|------|
@@ -41,19 +41,19 @@ A wrong hash makes the browser block the script, so the invite page would show n
 
 ## GitHub Pages setup (owner steps, once)
 
-Order matters: verify the domain **first**, so nobody else can claim `zloma.org` subdomains on GitHub Pages while the DNS record exists.
+Order matters: verify the domain **first**, so nobody else can claim `zloma.app` subdomains on GitHub Pages while the DNS record exists.
 
-1. **Verify the domain.** GitHub profile (top right) → Settings → Pages → Add a domain → `zloma.org`. GitHub shows a TXT record (`_github-pages-challenge-zloma`). Add it at the DNS provider of `zloma.org`, click Verify, and wait until it shows as **Verified**. A verified domain cannot be claimed by another GitHub account, including after a Pages site is removed.
+1. **Verify the domain.** GitHub profile (top right) → Settings → Pages → Add a domain → `zloma.app`. GitHub shows a TXT record (`_github-pages-challenge-zloma`). Add it at the DNS provider of `zloma.app`, click Verify, and wait until it shows as **Verified**. A verified domain cannot be claimed by another GitHub account, including after a Pages site is removed.
 2. On GitHub create the **public** repo `zloma/swapp-download` (empty, no README).
 3. In this folder: `git remote add origin https://github.com/zloma/swapp-download.git` then `git push -u origin main`.
 4. Repo Settings → Pages → Build and deployment: Source "Deploy from a branch", Branch `main`, folder `/ (root)`.
 5. Add the DNS CNAME record (below).
-6. In Settings → Pages → Custom domain enter `loopa.zloma.org` and Save. (The `CNAME` file already contains it.)
+6. In Settings → Pages → Custom domain enter `loopa.zloma.app` and Save. (The `CNAME` file already contains it.)
 7. Wait for the DNS check and certificate, then tick **Enforce HTTPS**.
 
 ### DNS record
 
-At the DNS provider of `zloma.org`, only after step 1 shows Verified:
+At the DNS provider of `zloma.app`, only after step 1 shows Verified:
 
 | Type | Name | Value |
 |------|------|-------|
@@ -61,13 +61,19 @@ At the DNS provider of `zloma.org`, only after step 1 shows Verified:
 
 Do not add an A record for it, and do not point it at anything else.
 
+`.app` is on the browsers' HSTS preload list: the site only ever loads over HTTPS, so it does not open at all until GitHub has issued the certificate.
+
+### History
+
+Until 2026-11-10 the site was served at `loopa.zloma.org`. That domain stays verified on GitHub; its `loopa` CNAME is deleted after the switch. No invite links were distributed on the old host.
+
 ## Check App Links
 
 After the site is live, open:
 
-`https://digitalassetlinks.googleapis.com/v1/statements:list?source.web.site=https://loopa.zloma.org&relation=delegate_permission/common.handle_all_urls`
+`https://digitalassetlinks.googleapis.com/v1/statements:list?source.web.site=https://loopa.zloma.app&relation=delegate_permission/common.handle_all_urls`
 
-The response must list `io.github.zloma.swapp` with both SHA-256 fingerprints. Also open `https://loopa.zloma.org/.well-known/assetlinks.json` directly (status 200, JSON). On an Android 12+ phone with the release APK: `adb shell pm get-app-links io.github.zloma.swapp` should show `loopa.zloma.org: verified`.
+The response must list `io.github.zloma.swapp` with both SHA-256 fingerprints. Also open `https://loopa.zloma.app/.well-known/assetlinks.json` directly (status 200, JSON). On an Android 12+ phone with the release APK: `adb shell pm get-app-links io.github.zloma.swapp` should show `loopa.zloma.app: verified`.
 
 ## Release signing rule
 
