@@ -1,4 +1,4 @@
-# Recomputes the CSP script hash in index.html and i/index.html.
+# Recomputes the CSP script hash in index.html (none needed while it has no script) and i/index.html.
 # Run after ANY edit to an inline <script>:  powershell -File tool/csp-hash.ps1
 # Use -Check to only verify (exit 1 on mismatch).
 param([switch]$Check)
@@ -8,7 +8,11 @@ foreach ($rel in @('index.html', 'i/index.html')) {
   $file = Join-Path $root $rel
   $html = [IO.File]::ReadAllText($file, [Text.Encoding]::UTF8)
   $m = [regex]::Match($html, '<script>([\s\S]*?)</script>')
-  if (-not $m.Success) { Write-Error "${rel}: no inline script"; $bad = $true; continue }
+  if (-not $m.Success) {
+    if ($html -match "script-src 'none'") { Write-Host "${rel}: ok (no inline script, script-src 'none')" }
+    else { Write-Error "${rel}: no inline script and CSP is not script-src 'none'"; $bad = $true }
+    continue
+  }
   $sha = [Security.Cryptography.SHA256]::Create()
   $hash = [Convert]::ToBase64String($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($m.Groups[1].Value)))
   $want = "'sha256-$hash'"
