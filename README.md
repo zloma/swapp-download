@@ -4,9 +4,9 @@ Static site for the Loopa app (code name `swapp`, Android package `io.github.zlo
 
 | Path | What |
 |------|------|
-| `/` (`index.html`) | Download page. The button points to `url` from `version.json`. |
+| `/` (`index.html`) | Download page for the release APK (static, no script). Button links to `releases/latest/download/loopa.apk`. |
 | `/i/?c=CODE` (`i/index.html`) | Invite landing page. Shows the code, "Otvori u aplikaciji" (custom scheme `io.github.zloma.swapp://invite?c=CODE`) and the download button. `noindex`. |
-| `/version.json` | Latest release info, read by the site and by the app (task 4.8). |
+| `/version.json` | Latest release info, read by the app (task 4.8). |
 | `/.well-known/assetlinks.json` | Android App Links verification (release + debug SHA-256). |
 | `CNAME`, `.nojekyll` | Custom domain; `.nojekyll` makes Pages serve the `.well-known` folder. |
 
@@ -20,17 +20,17 @@ Schema from ADR 006 (plan rows 4.7 and 4.8):
 
 | Field | Type | Meaning |
 |-------|------|---------|
-| `latest` | string (`x.y.z`) | Latest released version. Shown on the download page and used by the app for the dismissible "new version" prompt. |
+| `latest` | string (`x.y.z`) | Latest released version. Used by the app for the dismissible "new version" prompt. |
 | `min` | string (`x.y.z`) | Lowest version still allowed to run. Older builds get the blocking update screen. `0.0.0` = no block. |
-| `url` | string | Stable `https://` URL of the APK (planned: `https://github.com/zloma/swapp-download/releases/latest/download/<fixed-name>.apk`). Empty string = no release yet; the pages then show a placeholder. Only `https://` values are used. |
+| `url` | string | Stable `https://` URL of the APK (`https://github.com/zloma/swapp-download/releases/latest/download/loopa.apk`). Only `https://` values are used. |
 
 ## Local preview
 
-`fetch('/version.json')` needs http, so do not open the files with `file://`. Serve the folder, for example `npx serve .` or any static server, and open `http://localhost:3000/i/?c=K7M2-QX4P`.
+The invite page and version.json need http, so do not open the files with `file://`. Serve the folder, for example `npx serve .` or any static server, and open `http://localhost:3000/i/?c=K7M2-QX4P`.
 
 ## CSP script hash
 
-Both pages have a CSP meta tag that allows only an exact hash of their inline script. After editing an inline `<script>`, run:
+`/i/` has a CSP meta tag that allows only an exact hash of its inline script (`/` has no script and uses `script-src 'none'`). After editing an inline `<script>`, run:
 
 ```
 powershell -File tool/csp-hash.ps1          # rewrites the hashes
@@ -83,4 +83,13 @@ Release SHA-256 `EA:D2:28:...:C3:B6`, debug SHA-256 `53:02:C5:...:FF:D7` (full v
 
 ## Contact
 
-tzlomislic@gmail.com
+info@zloma.app
+
+## Releasing a new version
+
+Owner steps, in the GitHub web UI (`gh` is not installed):
+
+1. In `index.html` change the version in the single marked spot (`<span id="version">`), and set `latest` in `version.json` to the same value. Set `min` only if older builds must be blocked. Commit and push.
+2. On GitHub open the repo, Releases, "Draft a new release". Create the tag `vX.Y.Z` (for example `v0.1.1`) and publish.
+3. Upload the APK with the exact asset name `loopa.apk`. Another name breaks `https://github.com/zloma/swapp-download/releases/latest/download/loopa.apk`, which the download button and `version.json` use.
+4. Open the download link on a phone and check it downloads the new APK. Pages caching can delay the site by about 10 minutes.
