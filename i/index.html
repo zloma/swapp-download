@@ -2,14 +2,14 @@
 <html lang="hr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-hyiTFf+VcuiQ+pS+a0vGiKSAq+FQM8dYSLUDPkg4S1c='; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-eMe87bovIdLshgyGUWAZ7MEKa0NDn/3wRBYyoR1l7o8='; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light">
 <title>Poziv u aplikaciju Loopa</title>
 <style>
-  :root { --fg:#1a1a1a; --muted:#4a4a4a; --bg:#ffffff; --card:#f3f5f8; --accent:#0b57d0; --accent-fg:#ffffff; --line:#5f6368; }
+  :root { --fg:#1a1a1a; --muted:#4a4a4a; --bg:#ffffff; --card:#f3f5f8; --accent:#0b57d0; --accent-fg:#ffffff; --line:#5f6368; --focus:#000000; }
   * { box-sizing: border-box; }
   body { margin:0; background:var(--bg); color:var(--fg); line-height:1.5; font-size:1.0625rem;
          font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
@@ -27,7 +27,7 @@
          font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; text-align: center; }
   .btn-primary { background: var(--accent); color: var(--accent-fg); }
   .btn-secondary { background: var(--bg); color: var(--accent); }
-  .btn:focus-visible, a:focus-visible { outline: 3px solid #000; outline-offset: 3px; box-shadow: 0 0 0 6px #fff; }
+  .btn:focus-visible, a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; box-shadow: 0 0 0 6px var(--bg); }
   a { color: var(--accent); }
   ol { padding-left: 1.5rem; } li { margin: .5rem 0; }
   .note { background: var(--card); border-left: 4px solid var(--line); padding: .75rem 1rem; border-radius: 4px; }
@@ -51,7 +51,6 @@
 
     <a class="btn btn-primary" id="open" href="#">Otvori u aplikaciji</a>
     <a class="btn btn-secondary" id="download" href="/">Preuzmi aplikaciju</a>
-    <p id="download-note" class="muted" hidden>Aplikacija još nije dostupna za preuzimanje.</p>
 
     <h2>Kako do ulaska</h2>
     <ol>
@@ -68,7 +67,7 @@
     <a class="btn btn-secondary" href="/">Idi na stranicu za preuzimanje</a>
   </section>
 
-  <p class="muted">Treba ti pomoć? Piši na <a href="mailto:tzlomislic@gmail.com">tzlomislic@gmail.com</a>.</p>
+  <p class="muted">Treba ti pomoć? Piši na <a href="mailto:info@zloma.app">info@zloma.app</a>.</p>
 </main>
 
 <script>
@@ -115,20 +114,6 @@
     try { if (document.execCommand("copy")) { ok(); } else { fail(); } } catch (e) { fail(); }
     document.body.removeChild(ta);
   });
-
-  // Download button: APK URL from version.json; only https accepted.
-  var dl = $("download");
-  fetch("/version.json", { cache: "no-cache", credentials: "omit" })
-    .then(function (r) { if (!r.ok) throw new Error("http"); return r.json(); })
-    .then(function (v) {
-      var url = v && typeof v.url === "string" ? v.url : "";
-      if (!/^https:\/\//.test(url)) throw new Error("no apk");
-      dl.setAttribute("href", url);
-    })
-    .catch(function () {
-      dl.setAttribute("href", "/");
-      $("download-note").hidden = false;
-    });
 })();
 </script>
 </body>
